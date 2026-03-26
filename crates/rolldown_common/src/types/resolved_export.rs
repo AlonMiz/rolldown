@@ -25,10 +25,20 @@ pub struct ResolvedExport {
   pub potentially_ambiguous_symbol_refs: Option<Vec<SymbolRef>>,
   pub symbol_ref: SymbolRef,
   pub came_from_cjs: bool,
+  /// When multiple CJS sources (conditional re-exports) provide the same export name,
+  /// this tracks the alternative symbols. Unlike ESM ambiguity (which is an error),
+  /// CJS conflicts are expected — only one branch runs at runtime, but statically
+  /// we don't know which.
+  pub cjs_conflicting_symbol_refs: Option<Vec<SymbolRef>>,
 }
 
 impl ResolvedExport {
   pub fn new(symbol_ref: SymbolRef, came_from_cjs: bool) -> Self {
-    Self { symbol_ref, potentially_ambiguous_symbol_refs: None, came_from_cjs }
+    Self {
+      symbol_ref,
+      potentially_ambiguous_symbol_refs: None,
+      came_from_cjs,
+      cjs_conflicting_symbol_refs: None,
+    }
   }
 }
